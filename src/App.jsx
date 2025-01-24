@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TaskInput from "./components/TaskInput/TaskInput";
 import TaskList from "./components/TaskList/TaskList";
+import "./App.css";
+
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [isEditing, setIsEditing] = useState(null);
   const [editedTaskName, setEditedTaskName] = useState("");
@@ -12,33 +12,31 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
+  // Mock credentials
+  const mockUser = {
+    username: "humaira",
+    password: "password123",
   };
 
+  // Handle login
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (username === mockUser.username && password === mockUser.password) {
+      setIsLoggedIn(true);
+      setError("");
+    } else {
+      setError("Invalid username or password!");
+    }
+  };
+
+  // Handle logout
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setUsername("");
+    setPassword("");
   };
 
-  return (
-    <div>
-      {isLoggedIn ? (
-        <>
-          <button onClick={handleLogout}>Logout</button>
-          <h1>Welcome to Track Tasks</h1>
-          <TaskInput />
-          <TaskList />
-        </>
-      ) : (
-        <>
-          <h1>Please Log In</h1>
-          <button onClick={handleLogin}>Login</button>
-        </>
-      )}
-    </div>
-  );
-
-  // Retrieve tasks from localStorage on app load
+  // Load tasks from localStorage on initial render
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem("tasks"));
     if (savedTasks) {
@@ -46,14 +44,13 @@ const App = () => {
     }
   }, []);
 
-  // Save tasks to localStorage whenever they change
+  // Save tasks to localStorage whenever tasks change
   useEffect(() => {
-    if (tasks.length > 0) {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
+    localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
+
   const addTask = (task) => {
-    const newTask = { ...task, completed: false }; // Add a 'completed' property
+    const newTask = { ...task, completed: false }; // Add 'completed' property
     setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
@@ -78,25 +75,61 @@ const App = () => {
     setIsEditing(null);
   };
 
-  // Sorting tasks by priority
+  // Sort tasks by priority
   const sortedTasks = [...tasks].sort((a, b) => {
     const priorityOrder = { High: 1, Medium: 2, Low: 3 };
     return priorityOrder[a.priority] - priorityOrder[b.priority];
   });
 
+  // Render the component
   return (
     <div>
-      <TaskInput addTask={addTask} />
-      <TaskList
-        tasks={sortedTasks}
-        toggleTaskCompletion={toggleTaskCompletion}
-        deleteTask={deleteTask}
-        editTask={editTask}
-        setIsEditing={setIsEditing}
-        isEditing={isEditing}
-        editedTaskName={editedTaskName}
-        setEditedTaskName={setEditedTaskName}
-      />
+      {isLoggedIn ? (
+        <>
+          <button onClick={handleLogout}>Logout</button>
+          <h1>
+            Your to-do list is your roadmap to success. <br /> Small wins, big
+            results!
+          </h1>
+          <TaskInput addTask={addTask} />
+          <TaskList
+            tasks={sortedTasks}
+            toggleTaskCompletion={toggleTaskCompletion}
+            deleteTask={deleteTask}
+            editTask={editTask}
+            setIsEditing={setIsEditing}
+            isEditing={isEditing}
+            editedTaskName={editedTaskName}
+            setEditedTaskName={setEditedTaskName}
+          />
+        </>
+      ) : (
+        <div>
+          <h1>Login</h1>
+          <form onSubmit={handleLogin}>
+            <div>
+              <label>Username: </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label>Password: </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            <button type="submit">Login</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
