@@ -94,7 +94,10 @@ const App = () => {
       {isLoggedIn ? (
         <>
           <button onClick={handleLogout}>Logout</button>
-          <h1>Welcome to Track Tasks</h1>
+          <h1>
+            Your to-do list is your roadmap to success. <br /> Small wins, big
+            results!
+          </h1>
 
           {/* Display weather data for outdoor tasks */}
           {weather && (
