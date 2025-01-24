@@ -15,7 +15,7 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [weather, setWeather] = useState(null); // State to store weather data
+  const [weather, setWeather] = useState(null);
 
   const WEATHER_API_KEY = "36fd2dbae9449f7a49b3077a83b8f92b";
   const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
@@ -41,7 +41,7 @@ const App = () => {
     setPassword("");
   };
 
-  // Fetch weather data if there are outdoor tasks
+  // to Fetch weather data if there are outdoor tasks
   useEffect(() => {
     const outdoorTask = tasks.find((task) => task.type === "Outdoor");
     if (outdoorTask) {
