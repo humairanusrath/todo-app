@@ -17,6 +17,7 @@ const TaskInput = ({ addTask }) => {
 
   return (
     <div className="task-input">
+      <h3>ToDo List</h3>
       <input
         type="text"
         placeholder="Enter your task"

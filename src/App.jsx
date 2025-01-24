@@ -3,9 +3,40 @@ import React, { useState } from "react";
 import TaskInput from "./components/TaskInput/TaskInput";
 import TaskList from "./components/TaskList/TaskList";
 const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [isEditing, setIsEditing] = useState(null);
   const [editedTaskName, setEditedTaskName] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+  return (
+    <div>
+      {isLoggedIn ? (
+        <>
+          <button onClick={handleLogout}>Logout</button>
+          <h1>Welcome to Track Tasks</h1>
+          <TaskInput />
+          <TaskList />
+        </>
+      ) : (
+        <>
+          <h1>Please Log In</h1>
+          <button onClick={handleLogin}>Login</button>
+        </>
+      )}
+    </div>
+  );
 
   // Retrieve tasks from localStorage on app load
   useEffect(() => {
