@@ -1,5 +1,9 @@
 import React from "react";
 import "./TaskList.css";
+<link
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  rel="stylesheet"
+/>;
 
 const TaskList = ({
   tasks,

@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import TaskInput from "./components/TaskInput/TaskInput";
 import TaskList from "./components/TaskList/TaskList";
 import "./App.css";
+<link
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  rel="stylesheet"
+/>;
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -11,14 +15,16 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [weather, setWeather] = useState(null); // State to store weather data
 
-  // Mock credentials
+  const WEATHER_API_KEY = "36fd2dbae9449f7a49b3077a83b8f92b";
+  const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
+
   const mockUser = {
     username: "humaira",
     password: "password123",
   };
 
-  // Handle login
   const handleLogin = (e) => {
     e.preventDefault();
     if (username === mockUser.username && password === mockUser.password) {
@@ -29,28 +35,31 @@ const App = () => {
     }
   };
 
-  // Handle logout
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUsername("");
     setPassword("");
   };
 
-  // Load tasks from localStorage on initial render
+  // Fetch weather data if there are outdoor tasks
   useEffect(() => {
-    const savedTasks = JSON.parse(localStorage.getItem("tasks"));
-    if (savedTasks) {
-      setTasks(savedTasks);
+    const outdoorTask = tasks.find((task) => task.type === "Outdoor");
+    if (outdoorTask) {
+      fetch(
+        `${WEATHER_API_URL}?q=Chennai&appid=${WEATHER_API_KEY}&units=metric`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setWeather(data);
+        })
+        .catch((error) => console.error("Error fetching weather data:", error));
+    } else {
+      setWeather(null); // Clear weather data if no outdoor tasks
     }
-  }, []);
-
-  // Save tasks to localStorage whenever tasks change
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
   const addTask = (task) => {
-    const newTask = { ...task, completed: false }; // Add 'completed' property
+    const newTask = { ...task, completed: false };
     setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
@@ -75,22 +84,27 @@ const App = () => {
     setIsEditing(null);
   };
 
-  // Sort tasks by priority
   const sortedTasks = [...tasks].sort((a, b) => {
     const priorityOrder = { High: 1, Medium: 2, Low: 3 };
     return priorityOrder[a.priority] - priorityOrder[b.priority];
   });
 
-  // Render the component
   return (
     <div>
       {isLoggedIn ? (
         <>
           <button onClick={handleLogout}>Logout</button>
-          <h1>
-            Your to-do list is your roadmap to success. <br /> Small wins, big
-            results!
-          </h1>
+          <h1>Welcome to Track Tasks</h1>
+
+          {/* Display weather data for outdoor tasks */}
+          {weather && (
+            <div className="weather">
+              <h3>Weather in Chennai:</h3>
+              <p>Temperature: {weather.main.temp}°C</p>
+              <p>Condition: {weather.weather[0].description}</p>
+            </div>
+          )}
+
           <TaskInput addTask={addTask} />
           <TaskList
             tasks={sortedTasks}
