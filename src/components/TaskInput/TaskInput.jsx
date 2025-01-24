@@ -29,6 +29,10 @@ const TaskInput = ({ addTask }) => {
         <option value="Medium">Medium</option>
         <option value="Low">Low</option>
       </select>
+      <select value={taskType} onChange={(e) => setTaskType(e.target.value)}>
+        <option value="Indoor">Indoor</option>
+        <option value="Outdoor">Outdoor</option>
+      </select>
       <button onClick={handleAddTask}>Add Task</button>
     </div>
   );
